@@ -76,11 +76,7 @@ function SimulatedCheckoutForm({ total, onPaid }) {
   return (
     <div className="card checkout-form">
       <h2>Confirmar pedido (modo prueba)</h2>
-      <p>
-        Todavía no has configurado <span className="mono">STRIPE_SECRET_KEY</span> en el backend, así que el pago
-        se simula para poder probar el flujo completo en local. Añade tus claves de test de Stripe cuando quieras
-        el cobro real.
-      </p>
+      <p>Modo de prueba: el pago se simula porque todavía no se configuraron las claves de Stripe.</p>
       <p className="detail-total">Total: {total.toFixed(2)} €</p>
       {error && <p className="form-error">{error}</p>}
       <button className="btn-primary" onClick={handleConfirm} disabled={procesando}>
