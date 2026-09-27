@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Velamar — Vistas de ejemplo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Karla:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+  :root{
+    --bg:#f4f7f6; --surface:#ffffff; --surface-2:#edf3f1;
+    --ink:#12232c; --ink-soft:#4a5f68; --ink-faint:#7c8f96;
+    --line:#d9e3e1; --line-strong:#c1d0cd;
+    --primary:#0e5c6b; --primary-strong:#073c47; --primary-tint:#e3eeed;
+    --accent:#d9673f; --accent-strong:#b8502f; --accent-tint:#fbe9e1;
+    --ok-bg:#dcf1e3; --ok-fg:#256b45;
+    --pend-bg:#faedd6; --pend-fg:#8a5a1c;
+    --danger:#a83c3c; --danger-tint:#f7e6e3; --danger-border:#e3b3ac;
+    --radius:10px;
+    --shadow:0 1px 2px rgba(10,30,35,.05), 0 8px 22px -12px rgba(10,30,35,.14);
+    --font-display:"Fraunces","Iowan Old Style","Palatino Linotype",serif;
+    --font-body:"Karla","Segoe UI",system-ui,sans-serif;
+    --font-mono:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--font-body); line-height:1.55;
+  }
+  h1,h2,h3{font-family:var(--font-display); font-weight:600; letter-spacing:-.01em; margin:0;}
+  a{color:inherit;}
+
+  /* ---- Selector de pestañas ---- */
+  .shell-tabs{
+    display:flex; gap:.25rem; padding:.75rem .75rem 0; background:var(--primary-strong);
+    position:sticky; top:0; z-index:50; overflow-x:auto;
+  }
+  .shell-tabs button{
+    appearance:none; border:none; cursor:pointer; font:inherit; font-weight:600; font-size:.85rem;
+    padding:.65rem 1.15rem; border-radius:.6rem .6rem 0 0; background:rgba(255,255,255,.08);
+    color:#bcd6d4; white-space:nowrap; transition:background .15s, color .15s;
+    display:flex; align-items:center; gap:.5rem;
+  }
+  .shell-tabs button svg{ width:15px; height:15px; flex:none; }
+  .shell-tabs button.active{ background:var(--bg); color:var(--primary-strong); }
+  .shell-note{
+    background:var(--primary-strong); color:#9fc2c0; font-size:.72rem; text-align:center;
+    padding:.4rem .75rem .65rem; letter-spacing:.02em;
+  }
+  .screen{ display:none; }
+  .screen.active{ display:block; animation:fade .25s ease; }
+  @keyframes fade{ from{opacity:0; transform:translateY(4px)} to{opacity:1; transform:none} }
+
+  /* ---- Iconos ---- */
+  .icon-def{ position:absolute; width:0; height:0; overflow:hidden; }
+  .sail-icon{ width:26px; height:26px; }
+
+  /* ---- Nav / footer compartidos del front público ---- */
+  .navbar{
+    background:var(--primary-strong); color:var(--surface); display:flex; align-items:center;
+    justify-content:space-between; padding:1rem 1.75rem; flex-wrap:wrap; gap:1rem;
+  }
+  .brand{ display:flex; align-items:center; gap:.55rem; font-family:var(--font-display); font-weight:600; font-size:1.2rem; }
+  .brand-mark{
+    width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(155deg,var(--primary),#0a4a58); flex:none;
+  }
+  .brand-mark svg{ width:17px; height:17px; color:#eafffb; }
+  .navlinks{ display:flex; gap:1.6rem; font-size:.9rem; font-weight:500; }
+  .navlinks a{ color:#c7dcda; text-decoration:none; }
+  .navlinks a.current, .navlinks a:hover{ color:var(--surface); }
+  .navactions{ display:flex; gap:.6rem; align-items:center; }
+  .btn{
+    display:inline-flex; align-items:center; gap:.4rem; border:none; cursor:pointer; font:inherit;
+    font-weight:700; font-size:.85rem; padding:.6rem 1.2rem; border-radius:.55rem; text-decoration:none;
+  }
+  .btn-accent{ background:var(--accent); color:#fff5f0; }
+  .btn-accent:hover{ background:var(--accent-strong); }
+  .btn-ghost{ background:transparent; color:var(--surface); border:1px solid rgba(255,255,255,.35); }
+  .btn-outline{ background:transparent; color:var(--primary-strong); border:1px solid var(--primary); }
+  .btn-danger{ background:var(--danger); color:#fff; }
+  .btn-danger:hover{ background:#8f3232; }
+  .btn-sm{ padding:.4rem .8rem; font-size:.78rem; }
+
+  .hero{
+    background:linear-gradient(135deg,var(--primary-strong),var(--primary));
+    color:var(--surface); padding:3.6rem 1.75rem; text-align:center;
+  }
+  .hero .eyebrow{ font-size:.72rem; text-transform:uppercase; letter-spacing:.12em; color:#a9d6d1; font-weight:700; margin-bottom:.6rem; }
+  .hero h1{ font-size:2.15rem; margin:0 0 .7rem; text-wrap:balance; }
+  .hero p{ color:#cfe4e1; max-width:36rem; margin:0 auto 1.6rem; line-height:1.55; }
+
+  .wrap{ max-width:72rem; margin:0 auto; padding:2.6rem 1.75rem; }
+  .section-title{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:1.2rem; flex-wrap:wrap; gap:.5rem;}
+  .section-title h2{ font-size:1.35rem; }
+  .section-title span{ color:var(--ink-faint); font-size:.85rem; font-family:var(--font-mono); }
+
+  .chips{ display:flex; gap:.6rem; flex-wrap:wrap; margin:1.4rem 0; }
+  .chip{
+    background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:.5rem 1.05rem;
+    font-size:.8rem; font-weight:600; color:var(--primary-strong); font-family:var(--font-mono);
+  }
+  .chip.chip-active{ background:var(--primary-tint); border-color:var(--primary); }
+
+  .grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:1.25rem; }
+  @media (max-width:900px){ .grid{ grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:560px){ .grid{ grid-template-columns:1fr; } }
+
+  .card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;
+    display:flex; flex-direction:column; box-shadow:var(--shadow);
+  }
+  .card-img{ height:8.5rem; display:flex; align-items:center; justify-content:center; }
+  .card-body{ padding:1.05rem; display:flex; flex-direction:column; gap:.4rem; flex:1; }
+  .card-cat{ font-size:.68rem; text-transform:uppercase; letter-spacing:.06em; color:var(--primary-strong); font-weight:700; background:var(--primary-tint); padding:2px 8px; border-radius:999px; align-self:flex-start; }
+  .card-name{ font-family:var(--font-display); font-weight:600; font-size:1rem; margin-top:.2rem; }
+  .card-price{ margin-top:auto; display:flex; align-items:center; justify-content:space-between; padding-top:.6rem; border-top:1px solid var(--line); }
+  .price{ font-weight:700; color:var(--ink); font-family:var(--font-mono); }
+  .stock{ font-size:.72rem; color:var(--ink-faint); }
+
+  .footer{ background:var(--primary-strong); color:#9fc2c0; padding:2rem 1.75rem; text-align:center; font-size:.8rem; }
+
+  /* ---- Perfil cliente ---- */
+  .profile-hero{
+    background:var(--primary-strong); color:var(--surface); padding:2.1rem 1.75rem;
+    display:flex; align-items:center; gap:1.1rem;
+  }
+  .avatar{
+    width:3.4rem; height:3.4rem; border-radius:50%; background:var(--accent);
+    display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-weight:600; font-size:1.25rem; color:#fff5f0;
+  }
+  .profile-hero h1{ font-size:1.25rem; }
+  .profile-hero p{ margin:.2rem 0 0; color:#a9d6d1; font-size:.85rem; }
+
+  .profile-grid{ display:grid; grid-template-columns:1.1fr 1.4fr; gap:1.75rem; align-items:start; }
+  @media (max-width:840px){ .profile-grid{ grid-template-columns:1fr; } }
+
+  .panel{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:1.5rem; box-shadow:var(--shadow); }
+  .panel h3{ margin:0 0 1.1rem; font-size:1.05rem; }
+  .field{ margin-bottom:.95rem; }
+  .field label{ display:block; font-size:.74rem; font-weight:700; color:var(--ink-faint); margin-bottom:.32rem; text-transform:uppercase; letter-spacing:.04em; }
+  .field input{
+    width:100%; border:1px solid var(--line-strong); border-radius:.55rem; padding:.6rem .75rem; font:inherit; background:var(--surface); color:var(--ink);
+  }
+  .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:.9rem; }
+  .actions-row{ display:flex; gap:.6rem; margin-top:.5rem; }
+
+  .danger-zone{ border:1px dashed var(--danger-border); background:var(--danger-tint); border-radius:.7rem; padding:1.05rem 1.2rem; margin-top:1.6rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
+  .danger-zone p{ margin:0; font-size:.82rem; color:#7a352f; max-width:26rem; }
+
+  table{ width:100%; border-collapse:collapse; font-size:.85rem; }
+  th{ text-align:left; font-size:.7rem; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-faint); padding:.5rem .6rem; border-bottom:1px solid var(--line); }
+  td{ padding:.7rem .6rem; border-bottom:1px solid var(--line); }
+  tr:last-child td{ border-bottom:none; }
+  td.mono, .price{ font-variant-numeric:tabular-nums; }
+  .badge{ display:inline-block; padding:.22rem .65rem; border-radius:999px; font-size:.72rem; font-weight:700; }
+  .badge-ok{ background:var(--ok-bg); color:var(--ok-fg); }
+  .badge-pend{ background:var(--pend-bg); color:var(--pend-fg); }
+
+  /* ---- Panel admin ---- */
+  .admin-header{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; padding:1.75rem; background:var(--surface); border-bottom:1px solid var(--line); }
+  .admin-header h1{ font-size:1.2rem; }
+  .admin-header p{ margin:.2rem 0 0; color:var(--ink-soft); font-size:.85rem; }
+  .admin-badge{ background:var(--primary-strong); color:var(--surface); font-size:.66rem; font-weight:700; padding:.28rem .65rem; border-radius:999px; letter-spacing:.04em; }
+
+  .admin-table-wrap{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
+  .p-thumb{ width:2.4rem; height:2.4rem; border-radius:.5rem; display:flex; align-items:center; justify-content:center; }
+  .p-thumb svg{ width:16px; height:16px; }
+  .row-actions{ display:flex; gap:.4rem; }
+  .icon-btn{ border:1px solid var(--line); background:var(--surface); border-radius:.4rem; padding:.32rem .6rem; font-size:.75rem; cursor:pointer; font-weight:600; font-family:var(--font-body); }
+  .icon-btn.edit{ color:var(--primary-strong); }
+  .icon-btn.del{ color:var(--danger); }
+</style>
+</head>
+<body>
+
+  <!-- Icono de vela reutilizable -->
+  <svg class="icon-def"><symbol id="ic-sail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6 20h12"/><path d="M12 20V4"/><path d="M12 4c3.5 1 6 5 6 10.5H12z"/><path d="M12 8.5C9.5 9.3 8 11.8 8 15h4"/>
+  </symbol></svg>
+  <svg class="icon-def"><symbol id="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 3v2.2M12 18.8V21M4.5 12H3M21 12h-1.5M6 6l1.3 1.3M16.7 16.7L18 18M18 6l-1.3 1.3M7.3 16.7 6 18"/></symbol></svg>
+  <svg class="icon-def"><symbol id="ic-cave" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19h18"/><path d="M4 19c0-6.5 3.6-11 8-11s8 4.5 8 11"/><path d="M8.5 19c0-3.6 1.6-6 3.5-6s3.5 2.4 3.5 6"/></symbol></svg>
+  <svg class="icon-def"><symbol id="ic-wave" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 15c1.5-1.6 3-1.6 4.5 0s3 1.6 4.5 0 3-1.6 4.5 0 3 1.6 4.5 0"/><path d="M2 19c1.5-1.6 3-1.6 4.5 0s3 1.6 4.5 0 3-1.6 4.5 0 3 1.6 4.5 0"/><path d="M6 9l3-5 3 5"/></symbol></svg>
+  <svg class="icon-def"><symbol id="ic-fork" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v6a2 2 0 0 0 2 2v10M7 3v6M10 3v6M13 3c-1.4 1-1.4 5 0 6v10"/></symbol></svg>
+  <svg class="icon-def"><symbol id="ic-flag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4h13l-3 4 3 4H5"/></symbol></svg>
+  <svg class="icon-def"><symbol id="ic-ferry" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15h16l-2 5H6z"/><path d="M6 15V8h12v7"/><path d="M9 8V5h6v3"/><path d="M2 20c1.4-1.2 2.8-1.2 4.2 0s2.8 1.2 4.2 0 2.8-1.2 4.2 0 2.8 1.2 4.2 0"/></symbol></svg>
+  <svg class="icon-def"><symbol id="ic-para" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10a9 9 0 0 1 18 0Z"/><path d="M3 10l5 3M21 10l-5 3M9 10l3 3M15 10l-3 3M12 13v8M8 21l4-8M16 21l-4-8"/></symbol></svg>
+  <svg class="icon-def"><symbol id="ic-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11 12 4l8 7"/><path d="M6 10v9h12v-9"/></symbol></svg>
+  <svg class="icon-def"><symbol id="ic-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-4 4-6 7-6s5.8 2 7 6"/></symbol></svg>
+  <svg class="icon-def"><symbol id="ic-tools" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m14.5 6.5 3 3L8 19l-4 1 1-4Z"/><path d="M13 4l2 2M17 8l2 2"/></symbol></svg>
+
+  <div class="shell-tabs">
+    <button class="tab-btn active" data-target="front"><svg><use href="#ic-home"/></svg> Front público</button>
+    <button class="tab-btn" data-target="perfil"><svg><use href="#ic-user"/></svg> Perfil de cliente</button>
+    <button class="tab-btn" data-target="admin"><svg><use href="#ic-tools"/></svg> Panel de administración</button>
+  </div>
+  <div class="shell-note">Maqueta visual estática — no es la app funcionando, solo muestra cómo se ve cada vista.</div>
+
+  <!-- ============ FRONT PÚBLICO ============ -->
+  <section id="front" class="screen active">
+    <nav class="navbar">
+      <div class="brand"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#ic-sail"/></svg></span> Velamar</div>
+      <div class="navlinks">
+        <a href="#" class="current">Inicio</a>
+        <a href="#">Catálogo</a>
+        <a href="#">Carrito (2)</a>
+      </div>
+      <div class="navactions">
+        <a class="btn btn-ghost btn-sm" href="#">Iniciar sesión</a>
+        <a class="btn btn-accent btn-sm" href="#">Registrarme</a>
+      </div>
+    </nav>
+
+    <div class="hero">
+      <p class="eyebrow">Excursiones en barco</p>
+      <h1>Vive la costa desde el agua</h1>
+      <p>Atardeceres en catamarán, cuevas marinas, rutas gastronómicas y aventuras en familia. Reserva tu plaza en minutos.</p>
+      <a class="btn btn-accent" href="#">Ver catálogo</a>
+    </div>
+
+    <div class="wrap">
+      <div class="section-title"><h2>Categorías</h2></div>
+      <div class="chips">
+        <span class="chip chip-active">Atardecer</span>
+        <span class="chip">Cultural</span>
+        <span class="chip">Baño y snorkel</span>
+        <span class="chip">Gastronómico</span>
+        <span class="chip">Aventura</span>
+        <span class="chip">Transporte</span>
+        <span class="chip">Adrenalina</span>
+      </div>
+
+      <div class="section-title" style="margin-top:2rem">
+        <h2>Excursiones destacadas</h2>
+        <span>8 excursiones en catálogo</span>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <div class="card-img" style="background:var(--accent-tint); color:var(--accent-strong);"><svg class="sail-icon"><use href="#ic-sun"/></svg></div>
+          <div class="card-body">
+            <span class="card-cat">Atardecer</span>
+            <span class="card-name">Atardecer en Catamarán</span>
+            <div class="card-price">
+              <span class="price">12,00&nbsp;€</span>
+              <span class="stock">90 min · 100 plazas</span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-img" style="background:var(--primary-tint); color:var(--primary-strong);"><svg class="sail-icon"><use href="#ic-cave"/></svg></div>
+          <div class="card-body">
+            <span class="card-cat">Cultural</span>
+            <span class="card-name">Cuevas y Reserva Marina</span>
+            <div class="card-price">
+              <span class="price">8,00&nbsp;€</span>
+              <span class="stock">75 min · 125 plazas</span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-img" style="background:#eaf1f3; color:var(--primary);"><svg class="sail-icon"><use href="#ic-wave"/></svg></div>
+          <div class="card-body">
+            <span class="card-cat">Baño y snorkel</span>
+            <span class="card-name">Cabos y Baño en Costa Blanca</span>
+            <div class="card-price">
+              <span class="price">29,00&nbsp;€</span>
+              <span class="stock">3 h · 100 plazas</span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-img" style="background:var(--accent-tint); color:var(--accent-strong);"><svg class="sail-icon"><use href="#ic-fork"/></svg></div>
+          <div class="card-body">
+            <span class="card-cat">Gastronómico</span>
+            <span class="card-name">Crucero Gourmet en Calas</span>
+            <div class="card-price">
+              <span class="price">43,00&nbsp;€</span>
+              <span class="stock">4 h · 125 plazas</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">Velamar · Proyecto final bootcamp · Costa Blanca, España</div>
+  </section>
+
+  <!-- ============ PERFIL CLIENTE ============ -->
+  <section id="perfil" class="screen">
+    <div class="profile-hero">
+      <div class="avatar">M</div>
+      <div>
+        <h1>Mi perfil</h1>
+        <p>milton@example.com</p>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <div class="profile-grid">
+        <div class="panel">
+          <h3>Datos personales</h3>
+          <div class="field"><label>Nombre completo</label><input value="Milton Santos" /></div>
+          <div class="field"><label>Email</label><input value="milton@example.com" /></div>
+          <div class="field"><label>Teléfono</label><input value="+34 600 111 222" /></div>
+          <div class="actions-row">
+            <button class="btn btn-accent btn-sm">Guardar cambios</button>
+            <button class="btn btn-outline btn-sm">Cancelar</button>
+          </div>
+
+          <div class="danger-zone">
+            <p>Eliminar tu cuenta borra tus datos personales y tus reservas de forma permanente.</p>
+            <button class="btn btn-danger btn-sm">Eliminar cuenta</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Historial de reservas</h3>
+          <table>
+            <thead><tr><th>Pedido</th><th>Excursión</th><th>Fecha</th><th>Estado</th><th>Total</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">#14</td><td>Atardecer en Catamarán</td><td>15 sep 2026</td><td><span class="badge badge-ok">Pagado</span></td><td class="price">24,00&nbsp;€</td></tr>
+              <tr><td class="mono">#9</td><td>Crucero Gourmet en Calas</td><td>02 ago 2026</td><td><span class="badge badge-ok">Pagado</span></td><td class="price">43,00&nbsp;€</td></tr>
+              <tr><td class="mono">#17</td><td>Parasailing sobre la Bahía</td><td>28 ago 2026</td><td><span class="badge badge-pend">Pendiente</span></td><td class="price">35,00&nbsp;€</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PANEL ADMIN ============ -->
+  <section id="admin" class="screen">
+    <div class="admin-header">
+      <div>
+        <h1>Panel de administración</h1>
+        <p>Gestión del catálogo de excursiones</p>
+      </div>
+      <div style="display:flex; align-items:center; gap:.8rem;">
+        <span class="admin-badge">ADMIN</span>
+        <button class="btn btn-accent btn-sm">+ Nueva excursión</button>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <div class="admin-table-wrap">
+        <table>
+          <thead>
+            <tr><th></th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Aforo</th><th>Acciones</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><div class="p-thumb" style="background:var(--accent-tint); color:var(--accent-strong);"><svg><use href="#ic-sun"/></svg></div></td>
+              <td>Atardecer en Catamarán</td><td>Atardecer</td><td class="price">12,00&nbsp;€</td><td>100</td>
+              <td><div class="row-actions"><button class="icon-btn edit">Editar</button><button class="icon-btn del">Eliminar</button></div></td>
+            </tr>
+            <tr>
+              <td><div class="p-thumb" style="background:var(--primary-tint); color:var(--primary-strong);"><svg><use href="#ic-cave"/></svg></div></td>
+              <td>Cuevas y Reserva Marina</td><td>Cultural</td><td class="price">8,00&nbsp;€</td><td>125</td>
+              <td><div class="row-actions"><button class="icon-btn edit">Editar</button><button class="icon-btn del">Eliminar</button></div></td>
+            </tr>
+            <tr>
+              <td><div class="p-thumb" style="background:#eaf1f3; color:var(--primary);"><svg><use href="#ic-wave"/></svg></div></td>
+              <td>Cabos y Baño en Costa Blanca</td><td>Baño y snorkel</td><td class="price">29,00&nbsp;€</td><td>100</td>
+              <td><div class="row-actions"><button class="icon-btn edit">Editar</button><button class="icon-btn del">Eliminar</button></div></td>
+            </tr>
+            <tr>
+              <td><div class="p-thumb" style="background:var(--accent-tint); color:var(--accent-strong);"><svg><use href="#ic-fork"/></svg></div></td>
+              <td>Crucero Gourmet en Calas</td><td>Gastronómico</td><td class="price">43,00&nbsp;€</td><td>125</td>
+              <td><div class="row-actions"><button class="icon-btn edit">Editar</button><button class="icon-btn del">Eliminar</button></div></td>
+            </tr>
+            <tr>
+              <td><div class="p-thumb" style="background:#efe6e0; color:#8a5a3c;"><svg><use href="#ic-flag"/></svg></div></td>
+              <td>Desembarco Pirata</td><td>Aventura</td><td class="price">14,00&nbsp;€</td><td>80</td>
+              <td><div class="row-actions"><button class="icon-btn edit">Editar</button><button class="icon-btn del">Eliminar</button></div></td>
+            </tr>
+            <tr>
+              <td><div class="p-thumb" style="background:#e7ecef; color:var(--ink-soft);"><svg><use href="#ic-ferry"/></svg></div></td>
+              <td>Bus Acuático del Puerto</td><td>Transporte</td><td class="price">2,50&nbsp;€</td><td>50</td>
+              <td><div class="row-actions"><button class="icon-btn edit">Editar</button><button class="icon-btn del">Eliminar</button></div></td>
+            </tr>
+            <tr>
+              <td><div class="p-thumb" style="background:#f2e9e2; color:var(--accent-strong);"><svg><use href="#ic-para"/></svg></div></td>
+              <td>Parasailing sobre la Bahía</td><td>Adrenalina</td><td class="price">35,00&nbsp;€</td><td>12</td>
+              <td><div class="row-actions"><button class="icon-btn edit">Editar</button><button class="icon-btn del">Eliminar</button></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+<script>
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.target).classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
